@@ -1,0 +1,104 @@
+create table PHARMACY (
+PH_ID serial primary key,
+Address varchar(40)
+);
+
+create table "GROUP" (
+GR_ID serial primary key,
+"Name" varchar(40)
+);
+
+create table PREPARATION (
+R_ID serial primary key,
+GR_ID int2,
+"Name" varchar(40)
+);
+
+create table AVAILABILITY (
+A_ID serial primary key,
+PH_ID int2,
+R_ID int2,
+Quantity int2,
+DateEnd date 
+);
+
+create table DEFICIT (
+D_ID serial primary key,
+PH_ID int2,
+PR_ID int2,
+Solution varchar(40),
+DateStart date,
+DateEnd date not null
+);
+
+create table EMPLOYEE (
+E_ID serial primary key,
+PH_ID int2,
+FName varchar(40),
+Post varchar(40)
+);
+
+create table CLIENT (
+C_ID serial primary key,
+FName varchar(40),
+LName varchar(40),
+DateReg date not null
+);
+
+create table BUYING (
+B_ID serial primary key,
+PH_ID int2,
+PR_ID int2,
+BS_ID int2,
+Price money
+);
+
+create table BASKET (
+BS_ID serial primary key,
+E_ID int2,
+C_ID int2
+);
+
+alter table PHARMACY add constraint ph_id_unique unique (PH_ID);
+alter table "GROUP" add constraint gr_id_unique unique (GR_ID);
+alter table PREPARATION add constraint r_id_unique unique (R_ID);
+alter table AVAILABILITY add constraint a_id_unique unique (A_ID);
+alter table DEFICIT add constraint d_id_unique unique (D_ID);
+alter table EMPLOYEE add constraint e_id_unique unique (E_ID);
+alter table CLIENT add constraint c_id_unique unique (C_ID);
+alter table BASKET add constraint bs_id_unique unique (BS_ID);
+alter table BUYING add constraint b_id_unique unique (B_ID);
+
+alter table DEFICIT add constraint d2_id_unique unique (PH_ID);
+alter table AVAILABILITY add constraint a2_id_unique unique (PH_ID);
+alter table EMPLOYEE add constraint e2_id_unique unique (PH_ID);
+alter table BUYING add constraint b2_id_unique unique (PH_ID);
+alter table PREPARATION add constraint r2_id_unique unique (GR_ID);
+alter table AVAILABILITY add column PR_ID int2 unique;
+alter table AVAILABILITY drop column R_ID;
+alter table AVAILABILITY add constraint a3_id_unique unique (PR_ID);
+alter table PREPARATION add column PR_ID int2 unique;
+alter table PREPARATION drop column R_ID;
+alter table BUYING add constraint b3_id_unique unique (PR_ID);
+alter table BASKET add constraint bs2_id_unique unique (E_ID);
+alter table BUYING add constraint b4_id_unique unique (BS_ID);
+alter table BASKET add constraint bs3_id_unique unique (C_ID);
+
+
+alter table PHARMACY add constraint ph_d foreign key (PH_ID) references DEFICIT(PH_ID);
+alter table PHARMACY add constraint ph_a foreign key (PH_ID) references AVAILABILITY(PH_ID);
+alter table PHARMACY add constraint ph_e foreign key (PH_ID) references EMPLOYEE(PH_ID);
+alter table PHARMACY add constraint ph_b foreign key (PH_ID) references BUYING(PH_ID);
+alter table "GROUP" add constraint g_p foreign key (GR_ID) references PREPARATION(GR_ID);
+alter table PREPARATION add constraint p_a foreign key (PR_ID) references AVAILABILITY(PR_ID);
+alter table PREPARATION add constraint p_b foreign key (PR_ID) references BUYING(PR_ID);
+alter table EMPLOYEE add constraint e_bs foreign key (E_ID) references BASKET(E_ID);
+alter table BASKET add constraint bs_b foreign key (BS_ID) references BUYING(BS_ID);
+alter table CLIENT add constraint c_bs foreign key (C_ID) references BASKET(C_ID);
+
+alter table AVAILABILITY add column DateStart date not null;
+alter table AVAILABILITY add column Mart varchar(3);
+alter table DEFICIT alter column DateStart set not null;
+alter table "GROUP" alter column "Name" set not null;
+alter table EMPLOYEE add column LName varchar(40) not null;
+alter table BUYING add column "Date" date;
